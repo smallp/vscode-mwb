@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
+import * as os from 'os';
 import * as unzip from 'unzip';
 import { Uri,window} from 'vscode';
 import * as xmlreader from 'xmlreader';
@@ -15,7 +16,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 	filePath:string=null;
 	private t_path='';
 	constructor(private root: Uri) {
-		this.t_path=root.fsPath+'/_.txml';
+		this.t_path=os.tmpdir()+'/_.xml';
 	}
 
 	refresh(): void {
@@ -35,7 +36,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 	parse(){
 		fs.access(this.filePath,(e)=>{
 			if (e){
-				console.log(`read file ${this.filePath} fail!`);
+				window.showErrorMessage(`read file ${this.filePath} fail!`);
 				this.filePath=null;
 				return;
 			}
@@ -145,6 +146,9 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 			for (i of keys) {
 				res.push(new Dependency(i,vscode.TreeItemCollapsibleState.Collapsed))
 			}
+			res.sort((a,b)=>{
+				return a.label>b.label?1:-1;
+			})
 		}else{
 			var data=this.data.get(element.label);
 			if (data){

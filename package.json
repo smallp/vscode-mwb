@@ -4,7 +4,7 @@
 	"description": "Covert .mwb to a table view to view database.",
 	"author": "Small",
 	"license": "MIT",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"publisher": "small",
 	"engines": {
 		"vscode": "^1.17.0"
@@ -17,13 +17,13 @@
 	],
 	"main": "./out/src/extension",
 	"icon": "img/MySQLWorkbench.png",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/smallp/vscode-mwb.git"
-    },
-    "bugs": {
-        "url": "https://github.com/smallp/vscode-mwb/issues"
-    },
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/smallp/vscode-mwb.git"
+	},
+	"bugs": {
+		"url": "https://github.com/smallp/vscode-mwb/issues"
+	},
 	"contributes": {
 		"configuration": {
 			"type": "object",
@@ -81,13 +81,14 @@
 		"postinstall": "node ./node_modules/vscode/bin/install"
 	},
 	"devDependencies": {
-		"@types/node": "*",
+		"@types/node": "^6.0.88",
 		"typescript": "^2.5.2",
 		"vscode": "^1.1.5"
 	},
 	"dependencies": {
-		"net": "^1.0.2",
 		"unzip": "^0.1.11",
-		"xmlreader": "^0.2.3"
+		"xmlreader": "^0.2.3",
+		"@types/node": "^6.0.88",
+		"vscode": "^1.1.5"
 	}
 }
