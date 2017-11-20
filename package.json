@@ -1,94 +1,94 @@
 {
-	"name": "mwb2table",
-	"displayName": "MWB to table view",
-	"description": "Covert .mwb to a table view to view database.",
-	"author": "Small",
-	"license": "MIT",
-	"version": "0.1.0",
-	"publisher": "small",
-	"engines": {
-		"vscode": "^1.17.0"
-	},
-	"categories": [
-		"Other"
-	],
-	"activationEvents": [
-		"onView:mwbTable"
-	],
-	"main": "./out/src/extension",
-	"icon": "img/MySQLWorkbench.png",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/smallp/vscode-mwb.git"
-	},
-	"bugs": {
-		"url": "https://github.com/smallp/vscode-mwb/issues"
-	},
-	"contributes": {
-		"configuration": {
-			"type": "object",
-			"title": "MWB",
-			"properties": {
-				"MWB.filepath": {
-					"type": "string",
-					"default": "",
-					"description": "Path of the mwb file.Eg /.vscode/t.mwb or /home/xxx/t.mwb"
-				},
-				"MWB.absolute": {
-					"type": "boolean",
-					"default": false,
-					"description": "Whether the file is in the workspace or not. If false, /home/xxx/t.mwb will be treat as ${workspaceRoot}/home/xxx/t.mwb"
-				}
-			}
-		},
-		"views": {
-			"explorer": [
-				{
-					"id": "mwbTable",
-					"name": "mwb table"
-				}
-			]
-		},
-		"commands": [
-			{
-				"command": "mwbTable.refreshEntry",
-				"title": "Refresh"
-			},
-			{
-				"command": "mwbTable.insert",
-				"title": "copy"
-			}
-		],
-		"menus": {
-			"view/title": [
-				{
-					"command": "mwbTable.refreshEntry",
-					"when": "view == mwbTable",
-					"group": "navigation"
-				}
-			],
-			"view/item/context": [
-				{
-					"command": "mwbTable.insert",
-					"when": "view == mwbTable && viewItem == table"
-				}
-			]
-		}
-	},
-	"scripts": {
-		"vscode:prepublish": "tsc -p ./",
-		"compile": "tsc -w -p ./",
-		"postinstall": "node ./node_modules/vscode/bin/install"
-	},
-	"devDependencies": {
-		"@types/node": "^6.0.88",
-		"typescript": "^2.5.2",
-		"vscode": "^1.1.5"
-	},
-	"dependencies": {
-		"unzip": "^0.1.11",
-		"xmlreader": "^0.2.3",
-		"@types/node": "^6.0.88",
-		"vscode": "^1.1.5"
-	}
+    "name": "mwb2table",
+    "displayName": "MWB to table view",
+    "description": "Covert .mwb to a table view to view database.",
+    "author": "Small",
+    "license": "MIT",
+    "version": "0.2.0",
+    "publisher": "small",
+    "engines": {
+        "vscode": "^1.17.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onView:mwbTable"
+    ],
+    "main": "./out/src/extension",
+    "icon": "img/MySQLWorkbench.png",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/smallp/vscode-mwb.git"
+    },
+    "bugs": {
+        "url": "https://github.com/smallp/vscode-mwb/issues"
+    },
+    "contributes": {
+        "configuration": {
+            "type": "object",
+            "title": "MWB",
+            "properties": {
+                "MWB.filepath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Path of the mwb file.Eg /.vscode/t.mwb or /home/xxx/t.mwb"
+                },
+                "MWB.absolute": {
+                    "type": "boolean",
+                    "default": false,
+                    "description": "Whether the file is in the workspace or not. If false, /home/xxx/t.mwb will be treat as ${workspaceRoot}/home/xxx/t.mwb"
+                }
+            }
+        },
+        "views": {
+            "explorer": [
+                {
+                    "id": "mwbTable",
+                    "name": "mwb table"
+                }
+            ]
+        },
+        "commands": [
+            {
+                "command": "mwbTable.refreshEntry",
+                "title": "Refresh"
+            },
+            {
+                "command": "mwbTable.insert",
+                "title": "copy"
+            }
+        ],
+        "menus": {
+            "view/title": [
+                {
+                    "command": "mwbTable.refreshEntry",
+                    "when": "view == mwbTable",
+                    "group": "navigation"
+                }
+            ],
+            "view/item/context": [
+                {
+                    "command": "mwbTable.insert",
+                    "when": "view == mwbTable && viewItem == table"
+                }
+            ]
+        }
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -w -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install"
+    },
+    "devDependencies": {
+        "@types/node": "^6.0.88",
+        "typescript": "^2.5.2",
+        "vscode": "^1.1.5"
+    },
+    "dependencies": {
+        "unzip": "^0.1.11",
+        "xmlreader": "^0.2.3",
+        "@types/node": "^6.0.88",
+        "vscode": "^1.1.5"
+    }
 }

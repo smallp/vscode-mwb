@@ -29,13 +29,14 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 			return;
 		}
 		if (absolute) this.filePath=path;
-		else this.filePath=this.root+path;
+		else this.filePath=this.root.fsPath+path;
 		this.parse();
 	}
 
 	parse(){
 		fs.access(this.filePath,(e)=>{
 			if (e){
+				console.log(e.message);
 				window.showErrorMessage(`read file ${this.filePath} fail!`);
 				this.filePath=null;
 				return;
@@ -153,7 +154,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 			var data=this.data.get(element.label);
 			if (data){
 				for (const i of data) {
-					res.push(new Dependency(i.name,vscode.TreeItemCollapsibleState.None))
+					res.push(new Dependency(`${i.name} ${i.type}`,vscode.TreeItemCollapsibleState.None))
 				}
 			}
 		}

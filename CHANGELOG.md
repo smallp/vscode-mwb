@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.0 (2017/11/20)
+* Fix bug if absolute is false.
+
 ## 0.1.0 (2017/11/16)
 * Change temp dir to os.tmpdir
 * Sort the table
