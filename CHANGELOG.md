@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.1 (2017/11/21)
+* Add type in column.
+
 ## 0.2.0 (2017/11/20)
 * Fix bug if absolute is false.
 

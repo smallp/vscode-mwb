@@ -9,9 +9,9 @@ interface coum{
 	type:string,
 	flag:string
 }
-export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
-	private _onDidChangeTreeData: vscode.EventEmitter<Dependency | undefined> = new vscode.EventEmitter<Dependency | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<Dependency | undefined> = this._onDidChangeTreeData.event;
+export class MwbProvider implements vscode.TreeDataProvider<Column> {
+	private _onDidChangeTreeData: vscode.EventEmitter<Column | undefined> = new vscode.EventEmitter<Column | undefined>();
+	readonly onDidChangeTreeData: vscode.Event<Column | undefined> = this._onDidChangeTreeData.event;
 	data:Map<string,Array<coum>>=new Map();
 	filePath:string=null;
 	private t_path='';
@@ -132,11 +132,11 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 		}
 	}
 
-	getTreeItem(element: Dependency): vscode.TreeItem {
+	getTreeItem(element: Column): vscode.TreeItem {
 		return element;
 	}
 
-	getChildren(element?: Dependency): Thenable<Dependency[]> {
+	getChildren(element?: Column): Thenable<Column[]> {
 		if (!this.filePath) {
 			vscode.window.showInformationMessage('No dependency in empty workspace');
 			return Promise.resolve([]);
@@ -145,7 +145,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 		if (!element){
 			var keys=this.data.keys();
 			for (i of keys) {
-				res.push(new Dependency(i,vscode.TreeItemCollapsibleState.Collapsed))
+				res.push(new Column(i,'',vscode.TreeItemCollapsibleState.Collapsed))
 			}
 			res.sort((a,b)=>{
 				return a.label>b.label?1:-1;
@@ -154,7 +154,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 			var data=this.data.get(element.label);
 			if (data){
 				for (const i of data) {
-					res.push(new Dependency(`${i.name} ${i.type}`,vscode.TreeItemCollapsibleState.None))
+					res.push(new Column(i.name,i.type,vscode.TreeItemCollapsibleState.None))
 				}
 			}
 		}
@@ -162,20 +162,23 @@ export class MwbProvider implements vscode.TreeDataProvider<Dependency> {
 	}
 }
 
-class Dependency extends vscode.TreeItem {
+class Column extends vscode.TreeItem {
 
 	constructor(
-		public readonly label: string,
+		private readonly name: string,
+		private readonly type: string,
 		public readonly collapsibleState: vscode.TreeItemCollapsibleState
 	) {
-		super(label, collapsibleState);
+		super('', collapsibleState);
 		if (collapsibleState==vscode.TreeItemCollapsibleState.None){
+			this.label=`${name} ${type}`;
 			this.command={
 				command:'mwbTable.insert',
 				title:'',
-				arguments:[label+',']
+				arguments:[name+',']
 			}
 		}else{
+			this.label=`${name}`;
 			this.contextValue='table';
 		}
 	}
