@@ -4,7 +4,7 @@
     "description": "Covert .mwb to a table view to view database.",
     "author": "Small",
     "license": "MIT",
-    "version": "0.2.2",
+    "version": "0.2.3",
     "publisher": "small",
     "engines": {
         "vscode": "^1.17.0"
@@ -33,6 +33,11 @@
                     "type": "string",
                     "default": "",
                     "description": "Path of the mwb file.Eg /.vscode/t.mwb or /home/xxx/t.mwb"
+                },
+                "MWB.database": {
+                    "type": "string",
+                    "default": "",
+                    "description": "The target database."
                 },
                 "MWB.absolute": {
                     "type": "boolean",
@@ -77,7 +82,8 @@
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -w -p ./",
+        "compile": "tsc -p ./",
+        "watch": "tsc -w -p ./",
         "postinstall": "node ./node_modules/vscode/bin/install"
     },
     "devDependencies": {

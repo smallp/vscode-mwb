@@ -15,6 +15,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 	data:Map<string,Array<coum>>=new Map();
 	filePath:string=null;
 	private t_path='';
+	private database='';
 	constructor(private root: Uri) {
 		this.t_path=os.tmpdir()+'/_.xml';
 	}
@@ -31,6 +32,10 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 		if (absolute) this.filePath=path;
 		else this.filePath=this.root.fsPath+path;
 		this.parse();
+	}
+
+	setDB(db:string){
+		this.database=db;
 	}
 
 	parse(){
@@ -68,6 +73,20 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 			}
 			throw "parse error!";
 		}
+		var selectDb=(db)=>{
+			var data;
+			if (this.database==''){
+				return db.value.value.array;
+			}else{
+				for (const i of db.value.array) {
+					var name=findAttr(i.value.array,'key','name').text();
+					if (name==this.database){
+						return i.value.array;
+					}
+				}
+			}
+			return null;
+		}
         fs.readFile(this.t_path,{encoding:'utf8'},(err,str)=>{
 			if (null !== err) {
 				window.showErrorMessage(err.message);
@@ -83,8 +102,11 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 				data=data.value.value.array;
 				data=findAttr(data,'struct-name','db.mysql.Catalog');
 				data=data.value.array;
-				data=findAttr(data,'content-struct-name','db.mysql.Schema');
-				data=data.value.value.array;
+				data=selectDb(findAttr(data,'content-struct-name','db.mysql.Schema'))
+				if (data===null){
+					window.showErrorMessage('404! Selected database not found!');
+					return ;
+				}
 				data=findAttr(data,'content-struct-name','db.mysql.Table');
 				data=data.value.array;
 				var res=[];

@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.3 (2018/03/20)
+* Muiti-database support.
+
 ## 0.2.1 (2017/11/21)
 * Add type in column.
 

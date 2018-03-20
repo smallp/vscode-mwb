@@ -4,9 +4,11 @@ import {MwbProvider} from './mwb';
 
 export function activate(context: vscode.ExtensionContext) {
 	const rootPath = vscode.workspace.workspaceFolders[0].uri;
+	const provide = new MwbProvider(rootPath);
 	var file:string=vscode.workspace.getConfiguration().get('MWB.filepath');
 	var absolute:boolean=vscode.workspace.getConfiguration().get('MWB.absolute');
-	const provide = new MwbProvider(rootPath);
+	var database:string=vscode.workspace.getConfiguration().get('MWB.database');
+	provide.setDB(database)
 	provide.setPath(file,absolute);
 	vscode.window.registerTreeDataProvider('mwbTable', provide);
 	vscode.commands.registerCommand('mwbTable.refreshEntry', () => provide.parse());
@@ -14,6 +16,8 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(_=>{
 		var file:string=vscode.workspace.getConfiguration().get('MWB.filepath');
 		var absolute:boolean=vscode.workspace.getConfiguration().get('MWB.absolute');
+		var database:string=vscode.workspace.getConfiguration().get('MWB.database');
+		provide.setDB(database)
 		provide.setPath(file,absolute);
 	}));
 }
