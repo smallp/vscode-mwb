@@ -126,8 +126,13 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 								obj.flag=flag.value.text();
 							else obj.flag=flag.value.array.map(i=>i.text()).join(' ');
 						}
-						var type=findAttr(i.link.array,'key','simpleType').text();
-						obj.type=type.split('.').pop();
+						var type=''
+						try {
+							type=findAttr(i.link.array,'key','simpleType').text();
+							type=type.split('.').pop();
+						} catch (e) {
+						}
+						obj.type=type;
 						return obj;
 					})
 					return table;
@@ -160,7 +165,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 
 	getChildren(element?: Column): Thenable<Column[]> {
 		if (!this.filePath) {
-			vscode.window.showInformationMessage('No dependency in empty workspace');
+			vscode.window.showInformationMessage('Please set the path of mwb in config first.');
 			return Promise.resolve([]);
 		}
 		var res=[],i;

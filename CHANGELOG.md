@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.2.4 (2018/05/29)
+* Fix bug: die when using user type.
+
 ## 0.2.3 (2018/03/20)
 * Muiti-database support.
 

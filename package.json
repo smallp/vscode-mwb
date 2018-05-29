@@ -4,7 +4,7 @@
     "description": "Covert .mwb to a table view to view database.",
     "author": "Small",
     "license": "MIT",
-    "version": "0.2.3",
+    "version": "0.2.4",
     "publisher": "small",
     "engines": {
         "vscode": "^1.17.0"
