@@ -1,7 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as os from 'os';
-import * as unzip from 'unzip';
+import * as admzip from 'adm-zip';
 import { Uri,window} from 'vscode';
 import * as xmlreader from 'xmlreader';
 interface coum{
@@ -14,10 +13,9 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 	readonly onDidChangeTreeData: vscode.Event<Column | undefined> = this._onDidChangeTreeData.event;
 	data:Map<string,Array<coum>>=new Map();
 	filePath:string=null;
-	private t_path='';
 	private database='';
 	constructor(private root: Uri) {
-		this.t_path=os.tmpdir()+'/_.xml';
+		
 	}
 
 	refresh(): void {
@@ -50,19 +48,15 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 		})
 	}
     unzip(){
-		fs.createReadStream(this.filePath)
-		.pipe(unzip.Parse())
-		.on('entry', (entry)=>{
-		  var fileName = entry.path;
-		  if (fileName === "document.mwb.xml") {
-			entry.pipe(fs.createWriteStream(this.t_path));
-			this._parse();
-		  } else {
-			entry.autodrain();
-		  }
-		})
+		var zip=new admzip(this.filePath)
+		var zipEntries = zip.getEntries()
+		for (const i of zipEntries) {
+			if (i.entryName=="document.mwb.xml"){
+				this._parse(i.getData().toString('utf8'))
+			}
+		}
     }
-    _parse(){
+    _parse(str){
 		var findAttr = function(obj,key,name) {
 			var i,attr;
 			for (i of obj) {
@@ -87,63 +81,56 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 			}
 			return null;
 		}
-        fs.readFile(this.t_path,{encoding:'utf8'},(err,str)=>{
-			if (null !== err) {
-				window.showErrorMessage(err.message);
+		xmlreader.read(str, (errors, response)=>{
+			if (null !== errors) {
+				window.showErrorMessage(errors.message);
 				return;
 			}
-			xmlreader.read(str, (errors, response)=>{
-				if (null !== errors) {
-					window.showErrorMessage(errors.message);
-					return;
-				}
-				var data=response.data.value.value.array;
-				data=findAttr(data,'content-struct-name','workbench.physical.Model');
-				data=data.value.value.array;
-				data=findAttr(data,'struct-name','db.mysql.Catalog');
-				data=data.value.array;
-				data=selectDb(findAttr(data,'content-struct-name','db.mysql.Schema'))
-				if (data===null){
-					window.showErrorMessage('404! Selected database not found!');
-					return ;
-				}
-				data=findAttr(data,'content-struct-name','db.mysql.Table');
-				data=data.value.array;
-				var res=[];
-				res=data.map(i => {
-					let table={name:'',column:[]}
+			var data=response.data.value.value.array;
+			data=findAttr(data,'content-struct-name','workbench.physical.Model');
+			data=data.value.value.array;
+			data=findAttr(data,'struct-name','db.mysql.Catalog');
+			data=data.value.array;
+			data=selectDb(findAttr(data,'content-struct-name','db.mysql.Schema'))
+			if (data===null){
+				window.showErrorMessage('404! Selected database not found!');
+				return ;
+			}
+			data=findAttr(data,'content-struct-name','db.mysql.Table');
+			data=data.value.array;
+			var res=[];
+			res=data.map(i => {
+				let table={name:'',column:[]}
+				var arr=i.value.array;
+				table.name=findAttr(arr,'key','name').text();
+				var column=findAttr(arr,'content-struct-name','db.mysql.Column').value.array;
+				table.column=column.map(i=>{
+					let obj:coum={name:'',flag:'',type:''}
 					var arr=i.value.array;
-					table.name=findAttr(arr,'key','name').text();
-					var column=findAttr(arr,'content-struct-name','db.mysql.Column').value.array;
-					table.column=column.map(i=>{
-						let obj:coum={name:'',flag:'',type:''}
-						var arr=i.value.array;
-						obj.name=findAttr(arr,'key','name').text();
-						var flag=findAttr(arr,'key','flags');
-						obj.flag='';
-						if ('value' in flag){
-							if (flag.value.count()==1)
-								obj.flag=flag.value.text();
-							else obj.flag=flag.value.array.map(i=>i.text()).join(' ');
-						}
-						var type=''
-						try {
-							type=findAttr(i.link.array,'key','simpleType').text();
-							type=type.split('.').pop();
-						} catch (e) {
-						}
-						obj.type=type;
-						return obj;
-					})
-					return table;
-				});
-				for (let i of res) {
-					this.data.set(i.name,i.column);
-				}
-				this.refresh();
-				fs.unlink(this.t_path,()=>{});
+					obj.name=findAttr(arr,'key','name').text();
+					var flag=findAttr(arr,'key','flags');
+					obj.flag='';
+					if ('value' in flag){
+						if (flag.value.count()==1)
+							obj.flag=flag.value.text();
+						else obj.flag=flag.value.array.map(i=>i.text()).join(' ');
+					}
+					var type=''
+					try {
+						type=findAttr(i.link.array,'key','simpleType').text();
+						type=type.split('.').pop();
+					} catch (e) {
+					}
+					obj.type=type;
+					return obj;
+				})
+				return table;
 			});
-		})
+			for (let i of res) {
+				this.data.set(i.name,i.column);
+			}
+			this.refresh();
+		});
     }
 
 	insert(text) {

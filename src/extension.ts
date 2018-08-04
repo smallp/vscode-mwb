@@ -3,6 +3,7 @@ import * as vscode from 'vscode';
 import {MwbProvider} from './mwb';
 
 export function activate(context: vscode.ExtensionContext) {
+	if (!vscode.workspace.workspaceFolders) return
 	const rootPath = vscode.workspace.workspaceFolders[0].uri;
 	const provide = new MwbProvider(rootPath);
 	var file:string=vscode.workspace.getConfiguration().get('MWB.filepath');
