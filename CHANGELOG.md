@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.0.0 (2023/11/14)
+* Fix bug: Deal with empty table.
+
 ## 0.2.5 (2018/08/04)
 * Fix bug: add support for vscode 1.25.
 

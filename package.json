@@ -4,18 +4,16 @@
     "description": "Covert .mwb to a table view to view database.",
     "author": "Small",
     "license": "MIT",
-    "version": "0.2.5",
+    "version": "1.0.0",
     "publisher": "small",
     "engines": {
-        "vscode": "^1.17.0"
+        "vscode": "^1.80.0"
     },
     "categories": [
         "Other"
     ],
-    "activationEvents": [
-        "onView:mwbTable"
-    ],
-    "main": "./out/src/extension",
+    "activationEvents": [],
+    "main": "./out/main",
     "icon": "img/MySQLWorkbench.png",
     "repository": {
         "type": "git",
@@ -43,6 +41,11 @@
                     "type": "boolean",
                     "default": false,
                     "description": "Whether the file is in the workspace or not. If false, /home/xxx/t.mwb will be treat as ${workspaceRoot}/home/xxx/t.mwb"
+                },
+                "MWB.needComma": {
+                    "type": "boolean",
+                    "default": true,
+                    "description": "When you click the coloum, do you need a comma after the coloum name?"
                 }
             }
         },
@@ -81,20 +84,19 @@
         }
     },
     "scripts": {
-        "vscode:prepublish": "tsc -p ./",
-        "compile": "tsc -p ./",
-        "watch": "tsc -w -p ./",
-        "postinstall": "node ./node_modules/vscode/bin/install"
+        "vscode:prepublish": "npm run esbuild-base -- --minify",
+        "esbuild-base": "esbuild ./src/extension.ts --bundle --outfile=out/main.js --external:vscode --format=cjs --platform=node",
+        "package": "vsce package --no-dependencies",
+        "publish": "vsce publish --no-dependencies"
     },
     "devDependencies": {
-        "@types/node": "^6.0.88",
-        "typescript": "^2.5.2",
-        "vscode": "^1.1.5"
+        "@types/node": "^20.0.0",
+        "esbuild": "^0.19.5",
+        "typescript": "^5.0.0",
+        "@types/vscode": "^1.80.0"
     },
     "dependencies": {
-        "adm-zip": "^0.4.11",
-        "xmlreader": "^0.2.3",
-        "@types/node": "^6.0.88",
-        "vscode": "^1.1.5"
+        "adm-zip": "^0.5.10",
+        "xmlreader": "^0.2.3"
     }
 }

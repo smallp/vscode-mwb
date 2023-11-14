@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import * as fs from 'fs';
-import * as admzip from 'adm-zip';
+import admzip from 'adm-zip';
 import { Uri,window} from 'vscode';
 import * as xmlreader from 'xmlreader';
 interface coum{
@@ -9,17 +9,18 @@ interface coum{
 	flag:string
 }
 export class MwbProvider implements vscode.TreeDataProvider<Column> {
-	private _onDidChangeTreeData: vscode.EventEmitter<Column | undefined> = new vscode.EventEmitter<Column | undefined>();
-	readonly onDidChangeTreeData: vscode.Event<Column | undefined> = this._onDidChangeTreeData.event;
+	private _onDidChangeTreeData: vscode.EventEmitter<Column | null> = new vscode.EventEmitter<Column | null>();
+	readonly onDidChangeTreeData: vscode.Event<Column | null> = this._onDidChangeTreeData.event;
 	data:Map<string,Array<coum>>=new Map();
 	filePath:string=null;
+	static needComma=true;
 	private database='';
 	constructor(private root: Uri) {
 		
 	}
 
 	refresh(): void {
-		this._onDidChangeTreeData.fire();
+		this._onDidChangeTreeData.fire(null);
 	}
 
 	setPath(path:string,absolute:boolean) {
@@ -103,7 +104,8 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 				let table={name:'',column:[]}
 				var arr=i.value.array;
 				table.name=findAttr(arr,'key','name').text();
-				var column=findAttr(arr,'content-struct-name','db.mysql.Column').value.array;
+				var column=findAttr(arr,'content-struct-name','db.mysql.Column').value.array
+				if (!column) return table
 				table.column=column.map(i=>{
 					let obj:coum={name:'',flag:'',type:''}
 					var arr=i.value.array;
@@ -165,7 +167,7 @@ export class MwbProvider implements vscode.TreeDataProvider<Column> {
 				return a.label>b.label?1:-1;
 			})
 		}else{
-			var data=this.data.get(element.label);
+			var data=this.data.get(element.label as string);
 			if (data){
 				for (const i of data) {
 					res.push(new Column(i.name,i.type,vscode.TreeItemCollapsibleState.None))
@@ -189,7 +191,7 @@ class Column extends vscode.TreeItem {
 			this.command={
 				command:'mwbTable.insert',
 				title:'',
-				arguments:[name+',']
+				arguments:[name+(MwbProvider.needComma?',':'')]
 			}
 		}else{
 			this.label=`${name}`;
